@@ -1,0 +1,17 @@
+body {
+    font-family: 'Arial', sans-serif; /* Or your preferred font */
+    background-color: #f8f9fa; /* Light background */
+    color: #495057; /* Darker text for better readability */
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.list-group-item {
+    border-color: #dee2e6; /* Light border for list items */
+}
+
+.item-name {
+    margin-left: 0.5rem; /* Space between checkbox and item name */
+}

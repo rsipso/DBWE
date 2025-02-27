@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <div class="row mb-3">
+        <div class="col">
+            <h1>Your Shopping Lists</h1>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('list.create_list') }}" class="btn btn-primary">Create New List</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Created Lists</h2>
+            {% if created_lists %}
+                <ul class="list-group">
+                    {% for lst in created_lists %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('list.list_detail', list_id=lst.id) }}">{{ lst.name }}</a>
+                            <span class="badge bg-primary rounded-pill">Creator</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No lists created yet. <a href="{{ url_for('list.create_list') }}">Create one now!</a></p>
+            {% endif %}
+        </div>
+
+        <div class="col-md-6">
+            <h2>Participating Lists</h2>
+            {% if participated_lists %}
+                <ul class="list-group">
+                    {% for lst in participated_lists %}
+                        <li class="list-group-item">
+                            <a href="{{ url_for('list.list_detail', list_id=lst.id) }}">{{ lst.name }}</a>
+                            <small class="text-muted">Created by {{ lst.creator.username }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Not participating in any lists yet.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

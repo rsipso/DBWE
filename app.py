@@ -1,42 +1,49 @@
-# app.py (Main Application File)
-
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_login import LoginManager, login_required, current_user
-from collections import defaultdict
+from flask import Flask
+from flask_migrate import Migrate
+from flask_login import LoginManager
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
+from dotenv import load_dotenv
 
-from models import db, User, Project, ProjectParticipant, Expense  # Import from models.py
-from forms import RegistrationForm, LoginForm, CreateProjectForm, AddExpenseForm, ShareProjectForm #Import forms
-from views import index, register, login, logout, create_project, project, delete_project, delete_expense, remove_participant # Import from views.py
+load_dotenv()
 
+import models
+from models import db
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your_secret_key')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///expenses.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)  # Initialize SQLAlchemy with the app
+bcrypt = Bcrypt()
 login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
+jwt = JWTManager()
+
+def create_app():
+    app = Flask(__name__)
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'your-secret-key' # Use environment variable for secret key
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///app.db' # Use environment variable for database URL
+    app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY') or 'jwt-secret-key' # Use environment variable for JWT secret key
+
+    db.init_app(app)
+    migrate = Migrate(app, db)
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login' # Route for login page
+    jwt.init_app(app)
+    bcrypt.init_app(app)
+
+
+    from routes.auth_routes import auth_bp
+    from routes.list_routes import list_bp
+    from routes.api_routes import api_bp
+
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(list_bp)
+    app.register_blueprint(api_bp)
+
+    return app
+
+app = create_app()
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
-
-# --- Registering routes using functions from views.py ---
-app.add_url_rule('/', view_func=index)
-app.add_url_rule('/register', view_func=register, methods=['GET', 'POST'])
-app.add_url_rule('/login', view_func=login, methods=['GET', 'POST'])
-app.add_url_rule('/logout', view_func=logout)
-app.add_url_rule('/create_project', view_func=create_project, methods=['GET', 'POST'])
-app.add_url_rule('/project/<int:id>', view_func=project, methods=['GET', 'POST'])
-app.add_url_rule('/delete_project/<int:project_id>', view_func=delete_project, methods=['POST'])
-app.add_url_rule('/delete_expense/<int:expense_id>', view_func=delete_expense, methods=['POST'])
-app.add_url_rule('/remove_participant/<int:project_id>/<int:user_id>', view_func=remove_participant, methods=['POST'])
-
-
+    return models.User.query.get(int(user_id))
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # Create database tables if they don't exist
     app.run(debug=True)

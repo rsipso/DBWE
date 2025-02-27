@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+{% block title %}{{ list.name }}{% endblock %}
+{% block content %}
+    <div class="row mb-3">
+        <div class="col">
+            <h1>{{ list.name }}</h1>
+            <p class="text-muted">Created by: {{ list.creator.username }} on {{ list.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col">
+            <h2>Items</h2>
+            <ul class="list-group">
+                {% for item in list.items %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <form method="POST" action="" class="d-flex align-items-center">
+                            <input type="hidden" name="tick_item" value="{{ item.id }}">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_ticked" value="true" {% if item.is_ticked %}checked{% endif %} onchange="this.form.submit()" id="item-tick-{{ item.id }}">
+                                <label class="form-check-label item-name {% if item.is_ticked %}text-decoration-line-through text-muted{% endif %}" for="item-tick-{{ item.id }}">
+                                    {{ item.name }}
+                                </label>
+                            </div>
+                        </form>
+                        <div>
+                            <small class="text-muted">Added by: {{ item.added_by_user.username }}</small>
+                            {% if item.is_ticked and item.ticked_by_user %}
+                                <br><small class="text-muted">Ticked by: {{ item.ticked_by_user.username }}</small>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h3>Add New Item</h3>
+            <form method="POST" action="" class="mb-3">
+                {{ add_item_form.hidden_tag() }}
+                <div class="input-group">
+                    {{ add_item_form.name(class="form-control", placeholder="Item name", id="addItemInput") }}
+                    {{ add_item_form.submit(class="btn btn-outline-secondary") }}
+                </div>
+                {% for error in add_item_form.name.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Share List</h3>
+            <form method="POST" action="">
+                {{ share_form.hidden_tag() }}
+                <div class="input-group">
+                    {{ share_form.username(class="form-control", placeholder="Username to share with", id="shareUserInput") }}
+                    {{ share_form.submit(class="btn btn-outline-info") }}
+                </div>
+                {% for error in share_form.username.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </form>
+        </div>
+    </div>
+
+
+    {% if tick_counts %}
+    <div class="row">
+        <div class="col">
+            <h3>Tick Counts</h3>
+            <ul class="list-group">
+                {% for username, count in tick_counts.items() %}
+                    <li class="list-group-item">
+                        {{ username }}: <span class="badge bg-secondary rounded-pill">{{ count }} items ticked</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{{ url_for('list.index') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+{% endblock %}

@@ -44,7 +44,7 @@ def login():
             print(f"Password check result: {password_check_result}") # LOG: Comparison result
 
             if password_check_result:
-                login_user(user, remember=form.remember_me.data)
+                login_user(user)
                 flash('Login successful.', 'success')
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(url_for('list.index'))

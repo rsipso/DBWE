@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from models import User, List, ListParticipant
 #from flask_bcrypt import check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from werkzeug.security import check_password_hash
+from flask_bcrypt import check_password_hash
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 

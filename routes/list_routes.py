@@ -28,6 +28,20 @@ def create_list():
         return redirect(url_for('list.index'))
     return render_template('create_list.html', form=form, title='Create New List')
 
+@list_bp.route('/list/<int:list_id>/delete', methods=['POST']) # New route for deleting lists, POST method
+@login_required
+def delete_list(list_id):
+    list_obj = List.query.get_or_404(list_id)
+
+    if list_obj.creator != current_user: # Authorization check: only creator can delete
+        flash("You are not authorized to delete this list.", 'danger')
+        return redirect(url_for('list.list_detail', list_id=list_id)) # Or redirect to dashboard, as you prefer
+
+    db.session.delete(list_obj) # Delete the list (cascades will delete items, participants)
+    db.session.commit()
+    flash(f'List "{list_obj.name}" has been deleted.', 'success')
+    return redirect(url_for('list.index')) # Redirect to dashboard after deletion
+
 @list_bp.route('/list/<int:list_id>', methods=['GET', 'POST'])
 @login_required
 def list_detail(list_id):

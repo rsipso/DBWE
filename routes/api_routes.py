@@ -8,15 +8,17 @@ api_bp = Blueprint('api', __name__, url_prefix='/api')
 
 @api_bp.route('/token', methods=['POST'])
 def create_token():
-    username = request.json.get('username', None)
-    password = request.json.get('password', None)
+    username = request.json.get('username')
+    password = request.json.get('password')
+
     user = User.query.filter_by(username=username).first()
 
-    if not user or not check_password_hash(user.password_hash, password):
+    if not user or not check_password_hash(user.password_hash, password.encode('utf-8')): # flask_bcrypt check, encode password
         return jsonify({"msg": "Bad username or password"}), 401
 
-    access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token)
+    access_token = create_access_token(identity=username, fresh=True)
+
+    return jsonify(access_token=access_token, token_type='bearer', expires_in=3600), 200
 
 @api_bp.route('/list', methods=['GET'])
 @jwt_required()

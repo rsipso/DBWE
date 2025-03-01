@@ -17,9 +17,9 @@ jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'your-secret-key' # Use environment variable for secret key
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///app.db' # Use environment variable for database URL
-    app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY') or 'jwt-secret-key' # Use environment variable for JWT secret key
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') # Use environment variable for secret key
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') # Use environment variable for database URL
+    app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY') # Use environment variable for JWT secret key
 
     db.init_app(app)
     migrate = Migrate(app, db)

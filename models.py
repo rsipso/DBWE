@@ -9,7 +9,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(128), nullable=False)
-    lists_created = db.relationship('List', backref='creator', lazy=True)
+    lists_created = db.relationship('List', backref='creator', lazy=True, cascade="all, delete-orphan")
     lists_participated = db.relationship('ListParticipant', backref='participant', lazy=True)
     items_added = db.relationship('Item', backref='added_by_user', lazy=True, foreign_keys='[Item.added_by_id]')
     items_ticked = db.relationship('Item', backref='ticked_by_user', lazy=True, foreign_keys='[Item.ticked_by_id]')

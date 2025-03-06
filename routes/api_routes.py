@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from models import User, List, ListParticipant
-#from flask_bcrypt import check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_bcrypt import check_password_hash
 
@@ -13,7 +12,7 @@ def create_token():
 
     user = User.query.filter_by(username=username).first()
 
-    if not user or not check_password_hash(user.password_hash, password.encode('utf-8')): # flask_bcrypt check, encode password
+    if not user or not check_password_hash(user.password_hash, password.encode('utf-8')):
         return jsonify({"msg": "Bad username or password"}), 401
 
     access_token = create_access_token(identity=username, fresh=True)

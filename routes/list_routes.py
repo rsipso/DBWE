@@ -49,32 +49,33 @@ def list_detail(list_id):
     if list_obj.created_by_id != current_user.id and not ListParticipant.query.filter_by(list_id=list_id, user_id=current_user.id).first():
         flash("You don't have permission to view this list.", 'danger')
         return redirect(url_for('list.index'))
-
+    
+    # Adding logging for troubleshooting
     add_item_form = AddItemForm()
     share_form = ShareListForm()
 
-    print("Entering list_detail function for list_id:", list_id) # LOG 1: Function entry
+    print("Entering list_detail function for list_id:", list_id)
 
     if request.method == 'POST':
-        print("Request method is POST") # LOG 2: Request is POST
+        print("Request method is POST")
 
         if 'name' in request.form:
-            print(" 'name' field is in request.form") # LOG 3: 'name' field is present
+            print(" 'name' field is in request.form")
             if add_item_form.validate_on_submit():
-                print("  add_item_form is valid") # LOG 4: Form validation success
+                print("  add_item_form is valid")
                 item = Item(name=add_item_form.name.data, list_id=list_obj.id, added_by_id=current_user.id)
-                print("  Item object created:", item) # LOG 5: Item object creation
+                print("  Item object created:", item)
                 db.session.add(item)
-                print("  Item added to session") # LOG 6: Added to session
+                print("  Item added to session")
                 db.session.commit()
-                print("  Session committed") # LOG 7: Session commit
+                print("  Session committed")
                 flash('Item added to list!', 'success')
-                print("  Flash message set, redirecting...") # LOG 8: Before redirect
+                print("  Flash message set, redirecting...")
                 return redirect(url_for('list.list_detail', list_id=list_id))
             else:
-                print("  add_item_form is NOT valid. Errors:", add_item_form.errors) # LOG 9: Form validation failed
+                print("  add_item_form is NOT valid. Errors:", add_item_form.errors)
         else:
-            print(" 'name' field is NOT in request.form") # LOG 10: 'name' field missing
+            print(" 'name' field is NOT in request.form") 
 
         if 'username' in request.form and share_form.validate_on_submit():
             user_to_share = User.query.filter_by(username=share_form.username.data).first()

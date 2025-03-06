@@ -13,7 +13,7 @@ def register():
 
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_password = generate_password_hash(form.password.data.encode('utf-8')) # Use flask_bcrypt's generate_password_hash, encode password
+        hashed_password = generate_password_hash(form.password.data.encode('utf-8'))
         user = User(username=form.username.data, email=form.email.data, password_hash=hashed_password.decode('utf-8'))
         db.session.add(user)
         db.session.commit()
@@ -34,7 +34,7 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user:
-            password_check_result = check_password_hash(user.password_hash, password.encode('utf-8')) # Use flask_bcrypt's check_password_hash, encode password to check
+            password_check_result = check_password_hash(user.password_hash, password.encode('utf-8'))
             if password_check_result:
                 login_user(user)
                 flash('Login successful.', 'success')

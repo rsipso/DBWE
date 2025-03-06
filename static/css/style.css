@@ -1,5 +1,5 @@
 body {
-    font-family: 'Arial', sans-serif; /* Or your preferred font */
+    font-family: 'Arial', sans-serif;
     background-color: #f8f9fa; /* Light background */
     color: #495057; /* Darker text for better readability */
 }
@@ -14,4 +14,9 @@ body {
 
 .item-name {
     margin-left: 0.5rem; /* Space between checkbox and item name */
+}
+
+.form-control,
+.form-control-lg {
+    font-size: 1rem;
 }

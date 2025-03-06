@@ -20,6 +20,10 @@ def create_app():
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') # Use environment variable for secret key
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') # Use environment variable for database URL
     app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY') # Use environment variable for JWT secret key
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_recycle': 3600  # Recycle connections after 1 hour
+    }
+
 
     db.init_app(app)
     migrate = Migrate(app, db)

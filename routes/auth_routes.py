@@ -14,7 +14,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data.encode('utf-8')) # Use flask_bcrypt's generate_password_hash, encode password
-        user = User(username=form.username.data, password_hash=hashed_password.decode('utf-8')) # Decode hash before storing
+        user = User(username=form.username.data, email=form.email.data, password_hash=hashed_password.decode('utf-8'))
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')

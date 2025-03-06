@@ -8,4 +8,3 @@ Flask-WTF
 Flask-Bcrypt
 Flask-JWT-Extended
 email-validator
-mysqlclient
